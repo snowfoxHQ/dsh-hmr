@@ -19,13 +19,17 @@ dsh-hmr/
 ├── packages/
 │   ├── hmr-client/        # TypeScript 客户端，封装 HMR 的 HTTP 接口（独立 npm 包）
 │   └── dsh-hmr/           # dsh 插件本体，注册 hmr_* 工具（独立 npm 包）
+├── patches/               # 插件依赖但上游未合并的服务端修复，构建时打到副本上
 └── vendor/
-    └── hmr/               # HMR 上游仓库（git submodule，独立子仓，不修改上游代码）
+    └── hmr/               # HMR 上游仓库（git submodule，保持 origin 原样）
         ├── hmr/           # Python 认知运行时
         └── service/       # FastAPI HTTP 服务（127.0.0.1:8077）
 ```
 
-`vendor/hmr` 是**只读上游**。任何对 HMR 的本地改动都应该优先走上游 PR，而不是在这个仓库里改。
+`vendor/hmr` **保持上游纯净**：子仓永远停在 `origin/main` 的某个提交上，不改文件、不打本地提交。
+插件确实需要的上游修复放在 `patches/*.patch`，由 `scripts/vendor-python.mjs` 在复制到
+`packages/dsh-hmr/python/` 之后应用到**副本**上（见 `patches/README.md`）。
+这样 `git -C vendor/hmr status` 恒为干净，发布物里又包含修复。
 
 ## 架构
 
@@ -101,7 +105,7 @@ dsh plugin --profile web add ./packages/dsh-hmr
 ## 开发
 
 ```bash
-npm run build      # 两个包全量构建（插件会先把 vendor/hmr 复制进 python/）
+npm run build      # 两个包全量构建（插件会先把 vendor/hmr 复制进 python/ 并打 patch）
 npm run typecheck
 npm test           # 两个包的集成测试，会真实拉起 Python 服务
 ```
@@ -113,7 +117,22 @@ dsh plugin --profile headless add ./packages/dsh-hmr
 dsh --profile headless "用 hmr_ingest 记录一条记忆，再用 hmr_recall 查回来"
 ```
 
-`vendor/hmr` 是只读上游子模块：在子仓里改完先提交到子仓，再在根仓更新指针。
+`vendor/hmr` 是只读上游子模块，**不要在子仓里做任何提交**。确实需要的服务端修复写成
+`patches/*.patch`，由 `vendor:python` 在复制副本时应用（详见 `patches/README.md`）。
+
+### 发布
+
+```bash
+npm run preflight     # npm pack 预检：元数据、tarball 清单、解包后 import 冒烟
+npm run release:dry   # 干净工作树 + 构建 + 预检 + npm publish --dry-run
+npm run release       # 真正发布（默认 latest；可加 -- --tag next --otp 123456）
+```
+
+`release` 按 `@dsh-hmr/hmr-client` → `dsh-hmr` 的顺序发布，两个包共用同一个版本号，版本不一致
+会直接拒绝。发布前会检查该版本是否已存在于 npm，发布后会回查 `npm view` 确认。
+
+包 `package.json` 还缺 `repository` / `homepage`（远端仓库尚未配置），发布前建议补上，否则 npm
+页面会是空的。
 
 ## License
 

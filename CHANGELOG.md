@@ -30,11 +30,11 @@ Display name: **dsh-Hestia Memory Runtime** (package `dsh-hmr`; unrelated to the
 - `dsh-hmr` advertised `memory_type` values (`lesson`, `fact`, `preference`, `episode`) that
   `MemoryObject.type` does not accept, so those ingests returned HTTP 500. The enum now mirrors
   the upstream pydantic literal, and a test asserts every advertised value is accepted.
-- Upstream `vendor/hmr/service/server.py`: the v2 routes (`/think`, `/best_decision`,
-  `/feedback`, `/evolve`, `/ingest_image`) were defined after the `uvicorn.run(...)` guard, so
-  they were never registered — the entry block now sits at the end of the module.
-- Upstream `vendor/hmr/service/server.py`: emoji log lines crashed on a GBK Windows console and
-  turned `/evolve` into a 500 — stdout/stderr are reconfigured to UTF-8 with `errors="replace"`.
+- `patches/0001-hmr-service-routes-and-utf8.patch` (applied to the vendored copy, never to the
+  submodule): the v2 routes (`/think`, `/best_decision`, `/feedback`, `/evolve`, `/ingest_image`)
+  were defined after the `uvicorn.run(...)` guard, so they were never registered; emoji log lines
+  also crashed on a GBK Windows console and turned `/evolve` into a 500 — stdout/stderr are now
+  reconfigured to UTF-8 with `errors="replace"`.
 - `HMR_STORAGE_PATH` pointing at a missing drive (a stale `I:\...` from another machine) no longer
   breaks the spawn; the plugin falls back to `~/.dsh-hmr/data` and warns.
 

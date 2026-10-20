@@ -1,5 +1,5 @@
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
-import { mkdtempSync } from 'node:fs';
+import { existsSync, mkdtempSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,7 +8,31 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 /** packages/hmr-client/test -> repo root */
 export const repoRoot = path.resolve(here, '../../..');
-export const hmrRepo = path.join(repoRoot, 'vendor', 'hmr');
+const vendoredRuntime = path.join(repoRoot, 'packages', 'dsh-hmr', 'python');
+const vendorScript = path.join(repoRoot, 'packages', 'dsh-hmr', 'scripts', 'vendor-python.mjs');
+
+/**
+ * Tests boot the vendored copy the plugin ships, because `patches/*.patch` are
+ * applied to it and not to the submodule. A fresh clone has no `python/` yet, so
+ * generate it through the plugin's own script first — same bytes npm publishes.
+ */
+function resolveRuntime(): string {
+  if (existsSync(path.join(vendoredRuntime, 'service', 'server.py'))) {
+    return vendoredRuntime;
+  }
+  try {
+    execFileSync(process.execPath, [vendorScript], { stdio: 'pipe' });
+  } catch (error) {
+    const detail = (error as { stderr?: Buffer }).stderr?.toString().trim();
+    throw new Error(
+      `could not vendor the HMR runtime — run "npm run build" at the repo root first.${detail ? `\n${detail}` : ''}`,
+    );
+  }
+  return vendoredRuntime;
+}
+
+/** Root of the Python runtime under test (vendored copy, patches applied). */
+export const hmrRepo = resolveRuntime();
 
 export interface ServiceHandle {
   readonly port: number;

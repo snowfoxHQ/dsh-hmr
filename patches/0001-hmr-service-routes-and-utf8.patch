@@ -1,0 +1,64 @@
+From babe29247d6204adcef9f99ef03a7aa1f94acc4c Mon Sep 17 00:00:00 2001
+From: Foxsnowing <142133502+snowfoxHQ@users.noreply.github.com>
+Date: Tue, 20 Oct 2026 11:31:10 +0800
+Subject: [PATCH] fix(service): register v2.0 routes before uvicorn.run and
+ force UTF-8 stdout
+
+v2.0 endpoints (/think /best_decision /feedback /evolve /ingest_image) were declared after a top-level uvicorn.run call that blocks, so their decorators never ran and the routes returned 404. Moved the entrypoint to the end of the file.
+
+On Windows the default GBK console codec raised UnicodeEncodeError on the emoji printed by the evolution engine, turning POST /evolve into a 500. Reconfigure stdout and stderr to UTF-8 with errors=replace.
+---
+ service/server.py | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/service/server.py b/service/server.py
+index 79d8664..cd4b6cb 100644
+--- a/service/server.py
++++ b/service/server.py
+@@ -22,6 +22,14 @@ from pathlib import Path
+ from typing import List, Dict, Any, Optional
+ from contextlib import asynccontextmanager
+ 
++# Windows consoles default to GBK/CP936. The engines print emoji (✅/⚡/💡),
++# which raises UnicodeEncodeError and turns /evolve into a 500. Force UTF-8.
++for _stream in (sys.stdout, sys.stderr):
++    try:
++        _stream.reconfigure(encoding="utf-8", errors="replace")
++    except (AttributeError, ValueError):
++        pass
++
+ try:
+     from hmr.core.hmr import HMR
+ except ImportError:
+@@ -254,13 +262,6 @@ def status(x_hmr_token: Optional[str] = Header(None)):
+     return hmr.get_system_status()
+ 
+ 
+-if __name__ == "__main__":
+-    print(f"[HMR Service] listening on http://{HMR_HOST}:{HMR_PORT}")
+-    if HMR_TOKEN:
+-        print("[HMR Service] enabled token auth")
+-    uvicorn.run(app, host=HMR_HOST, port=HMR_PORT)
+-
+-
+ # =============================================================================
+ # v2.0 new endpoints
+ # =============================================================================
+@@ -440,3 +441,14 @@ def ingest_image(req: IngestImageRequest, x_hmr_token: Optional[str] = Header(No
+         "origin_path": origin_path,
+         "model": model,
+     }
++
++
++# -----------------------------------------------------------------------------
++# Entrypoint. Must stay at the very bottom: uvicorn.run() blocks, so any route
++# registered after this block never makes it into the running app.
++# -----------------------------------------------------------------------------
++if __name__ == "__main__":
++    print(f"[HMR Service] listening on http://{HMR_HOST}:{HMR_PORT}")
++    if HMR_TOKEN:
++        print("[HMR Service] enabled token auth")
++    uvicorn.run(app, host=HMR_HOST, port=HMR_PORT)
+-- 
+2.53.0.windows.1
+

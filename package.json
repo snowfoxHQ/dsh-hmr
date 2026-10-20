@@ -14,7 +14,11 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "clean": "npm run clean --workspaces --if-present"
+    "clean": "npm run clean --workspaces --if-present",
+    "vendor:python": "npm run vendor:python -w dsh-hmr",
+    "preflight": "node scripts/preflight.mjs",
+    "release:dry": "node scripts/publish.mjs --dry-run",
+    "release": "node scripts/publish.mjs"
   },
   "devDependencies": {
     "@deepseek-ai/dsh": "^0.2.1-rc.2"
