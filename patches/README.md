@@ -3,8 +3,8 @@
 Fixes the plugin needs from the HMR service, expressed as patches instead of commits.
 
 `vendor/hmr` is kept at a **pristine upstream commit** — never modified locally, never given local
-commits. `packages/dsh-hmr/scripts/vendor-python.mjs` copies `vendor/hmr/{hmr,service}` into
-`packages/dsh-hmr/python/` and then applies everything in this directory to **the copy**, so:
+commits. `plugins/dsh-hmr/scripts/vendor-python.mjs` copies `vendor/hmr/{hmr,service}` into
+`plugins/dsh-hmr/python/` and then applies everything in this directory to **the copy**, so:
 
 - the submodule pointer always matches `origin/main` of `snowfoxHQ/HMR`;
 - `git -C vendor/hmr status` stays clean;

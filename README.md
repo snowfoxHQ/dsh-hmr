@@ -12,13 +12,17 @@ HMR 提供的不只是"存笔记 + 搜笔记"，而是显式推理链、反思�
 
 ## 目录结构
 
+monorepo 按「可发布的 dsh 插件」「dsh skill」「共享库」三类分目录：
+
 ```
 dsh-hmr/
 ├── docs/
 │   └── dsh-listing.md     # 提交给 dsh 插件目录的条目文案（显示名：dsh-Hestia Memory Runtime）
 ├── packages/
-│   ├── hmr-client/        # TypeScript 客户端，封装 HMR 的 HTTP 接口（独立 npm 包）
+│   └── hmr-client/        # 共享 TS 库，封装 HMR 的 HTTP 接口（独立 npm 包）
+├── plugins/
 │   └── dsh-hmr/           # dsh 插件本体，注册 hmr_* 工具（独立 npm 包）
+├── skills/                # dsh skill 目录（当前为空，见 skills/README.md）
 ├── patches/               # 插件依赖但上游未合并的服务端修复，构建时打到副本上
 └── vendor/
     └── hmr/               # HMR 上游仓库（git submodule，保持 origin 原样）
@@ -26,9 +30,12 @@ dsh-hmr/
         └── service/       # FastAPI HTTP 服务（127.0.0.1:8077）
 ```
 
+新增内容时的归属：dsh 插件放 `plugins/<name>/`，dsh skill 放 `skills/<name>/`，被多个包复用的
+库放 `packages/<name>/`；三者都是 npm workspace，都会随 `npm run build/test` 一起跑。
+
 `vendor/hmr` **保持上游纯净**：子仓永远停在 `origin/main` 的某个提交上，不改文件、不打本地提交。
 插件确实需要的上游修复放在 `patches/*.patch`，由 `scripts/vendor-python.mjs` 在复制到
-`packages/dsh-hmr/python/` 之后应用到**副本**上（见 `patches/README.md`）。
+`plugins/dsh-hmr/python/` 之后应用到**副本**上（见 `patches/README.md`）。
 这样 `git -C vendor/hmr status` 恒为干净，发布物里又包含修复。
 
 ## 架构
@@ -37,7 +44,7 @@ dsh-hmr/
 dsh agent
    │  hmr_* 工具
    ▼
-packages/dsh-hmr        (Node.js 插件)
+plugins/dsh-hmr         (Node.js 插件)
    │  HTTP + x-hmr-token
    ▼
 vendor/hmr/service      (Python · FastAPI · 127.0.0.1:8077)
@@ -64,10 +71,10 @@ npm install
 npm run build
 
 # 4. 自检 Python 环境与内置运行时
-node packages/dsh-hmr/dist/cli.js doctor
+node plugins/dsh-hmr/dist/cli.js doctor
 
 # 5. 在 dsh 中启用插件
-dsh plugin --profile web add ./packages/dsh-hmr
+dsh plugin --profile web add ./plugins/dsh-hmr
 ```
 
 ## 环境变量
@@ -117,7 +124,7 @@ npm test           # 两个包的集成测试，会真实拉起 Python 服务
 全链路回归（用真实 agent 跑一遍 `hmr_*` 工具）：
 
 ```bash
-dsh plugin --profile headless add ./packages/dsh-hmr
+dsh plugin --profile headless add ./plugins/dsh-hmr
 dsh --profile headless "用 hmr_ingest 记录一条记忆，再用 hmr_recall 查回来"
 ```
 
@@ -141,8 +148,8 @@ npm run release       # 真正发布（默认 latest；可加 -- --tag next --ot
 npm run release -- --registry https://registry.npmjs.org
 ```
 
-包 `package.json` 还缺 `repository` / `homepage`（远端仓库尚未配置），发布前建议补上，否则 npm
-页面会是空的。
+首次发布前还需要在 npm 上创建 `@dsh-hmr` scope，并让 registry 指向官方源（镜像只读）。完整的
+一次性准备、key/2FA 说明、验证命令与错误排查见 **[RELEASING.md](./RELEASING.md)**。
 
 ## License
 

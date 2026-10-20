@@ -15,7 +15,7 @@ Display name: **dsh-Hestia Memory Runtime** (package `dsh-hmr`; unrelated to the
   (`/health`, `/ingest`, `/recall`, `/save_state`, `/restore_state`, `/reindex`, `/status`,
   `/think`, `/best_decision`, `/feedback`, `/evolve`, `/ingest_image`), with token auth,
   request timeouts and `waitForReady`.
-- `packages/dsh-hmr` — the dsh plugin: five `hmr_*` tools (`recall`, `ingest`, `think`,
+- `plugins/dsh-hmr` — the dsh plugin: five `hmr_*` tools (`recall`, `ingest`, `think`,
   `reflect`, `evolve`), schemastery config, managed/external process modes, and a
   `dsh-hmr` CLI (`doctor`, `serve`, `env`).
 - Managed mode spawns the bundled Python service on first use, warms it in the background,
