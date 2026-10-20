@@ -105,10 +105,14 @@ dsh plugin --profile web add ./packages/dsh-hmr
 ## 开发
 
 ```bash
+git clone --recursive https://github.com/snowfoxHQ/dsh-hmr.git   # vendor/hmr 是子模块
+npm install
 npm run build      # 两个包全量构建（插件会先把 vendor/hmr 复制进 python/ 并打 patch）
 npm run typecheck
 npm test           # 两个包的集成测试，会真实拉起 Python 服务
 ```
+
+已 clone 但没带 `--recursive` 时补一步：`git submodule update --init --recursive`。
 
 全链路回归（用真实 agent 跑一遍 `hmr_*` 工具）：
 

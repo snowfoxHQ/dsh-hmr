@@ -23,6 +23,7 @@ const PACKAGES = [
     required: [
       'package.json',
       'README.md',
+      'LICENSE',
       'dist/index.js',
       'dist/index.d.ts',
     ],
@@ -33,6 +34,7 @@ const PACKAGES = [
     required: [
       'package.json',
       'README.md',
+      'LICENSE',
       'cordis.patch.yml',
       'dist/index.js',
       'dist/index.d.ts',
