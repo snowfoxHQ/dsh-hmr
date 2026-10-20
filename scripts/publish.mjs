@@ -193,9 +193,20 @@ for (const pkg of packages) {
 if (!dryRun) {
   console.log('\n=== verify ===');
   for (const pkg of published) {
-    const ok = publishedVersion(pkg.name, pkg.version);
+    // The registry lags a couple of seconds behind a successful PUT.
+    let ok = false;
+    for (let attempt = 0; attempt < 4 && !ok; attempt += 1) {
+      if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 2000));
+      ok = publishedVersion(pkg.name, pkg.version);
+    }
     console.log(`  ${ok ? '✓' : '✗'} ${pkg.name}@${pkg.version}`);
-    if (!ok) process.exitCode = 1;
+    if (!ok) {
+      console.error(
+        `  ${pkg.name}@${pkg.version} is not readable from the registry. ` +
+          'A stage-only token publishes a 0.0.0-stage placeholder instead of the real version.',
+      );
+      process.exitCode = 1;
+    }
   }
 }
 

@@ -76,6 +76,18 @@ npm view @dsh-hmr/hmr-client version --registry https://registry.npmjs.org
 结论：用 `npm login` 或 classic token 的，创建完 scope 直接发布即可；只有你在 CI 里用 granular
 token 才需要回后台补授权。
 
+自己建 granular token 时，下面三处任何一处填错都会让发布以 404 或 `0.0.0-stage` 的形式失败：
+
+| 字段 | 必须的值 | 填错的后果 |
+| --- | --- | --- |
+| `Permissions` | `Read and write (publish and stage)` | 选 `stage only` → 只生成 `0.0.0-stage` 占位，真版本不出现 |
+| `Select packages` | `All packages` | 只选 `@dsh-hmr` scope 会漏掉裸名包 `dsh-hmr` |
+| `Organizations` | 勾上 `dsh-hmr`，Summary 显示 `1 organization` | 显示 `0 organizations` → scope 包 `PUT` 返回 404 |
+
+另外账号开了 2FA 又只绑了 security key（没有 TOTP app）时，CLI 拿不到 6 位码，务必在 token
+上勾 `Bypass two-factor authentication`，否则 `publish` 会卡在 `EOTP`。但这类 token 不能做
+`unpublish` / `deprecate` 等包管理操作，那些只能去网页用 security key 交互完成。
+
 顺带记一下 npm 正在收紧「绕过 2FA 的 granular token」：2026-08 起这类 token 不能再用执行
 账户 / 包 / 组织的管理操作（含 org membership 与 package 授权），2027-01 前后不能再直接
 `publish`，只能 staging 后由人工 2FA 放行。本仓库走的是人工 `npm login` + `--otp`，不受影响；
@@ -163,10 +175,13 @@ npx dsh-hmr doctor
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
 | `E403 Forbidden — PUT .../@dsh-hmr%2fhmr-client` | scope 不存在，或当前账号不是该 org 成员 | 按 0.2 创建 org；确认 `npm whoami` 是创建者 |
+| `404 Not Found — PUT .../@dsh-hmr%2fhmr-client`，但 `npm org ls dsh-hmr` 正常 | granular token 没给这个 **organization** 写权限；权限下拉设成 `Read and write` 不等于选中了组织 | 重新生成 token：`All packages` + `Organizations` 里勾 `dsh-hmr`，Summary 必须出现 `1 organization` |
+| 发布"成功"，但 registry 上只有一个 `0.0.0-stage` | token 的 `Permissions` 选了 `Read and write (stage only)` | 换成 `Read and write (publish and stage)`；staged 条目去网页 approve 或删除 |
+| `npm unpublish` 打印 `After authenticating, your token can be retrieved from ...authId=` | 2FA-bypass token 不能执行包管理操作（2026-08 起强制交互式 2FA） | 在网页包设置里删版本，或改用 `npm login --auth-type=web` |
 | `E403 ... 402 Payment Required` | scope 下想发私有包 | 保持 `--access public`（脚本默认按包名自动加），或升级付费 plan |
 | `EOTP` | 账号开了 2FA | 加 `--otp <6位>`，或交互式重跑 |
 | `EPUBLISHCONFLICT` / `E409` | 该版本已存在 | 改版本号，**不要**复用已发布版本 |
-| `404 Not Found - PUT` | registry 是镜像 / 打错了地址 | 确认 `--registry https://registry.npmjs.org` |
+| `404 Not Found - PUT`，且 registry 是镜像域名 | 镜像只读 | 确认 `--registry https://registry.npmjs.org` |
 | `preflight: python/service/server.py is missing the patches/0001 ...` | `plugins/dsh-hmr/python/` 是旧副本 | `npm run vendor:python` 后重试 |
 | `npm pack` 输出解析失败 | `prepack` 的 stdout 混进了 JSON | 已由 `parseTrailingJson` 兜住；再出现就贴完整输出排查 |
 | `EJSONPARSE` on package.json | 手工改坏 | `node -e "require('./plugins/dsh-hmr/package.json')"` 定位 |
