@@ -1,0 +1,6 @@
+# patches/ are applied with `git apply` against LF sources; core.autocrlf on
+# Windows would rewrite them to CRLF on checkout and break every hunk.
+*.patch text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
