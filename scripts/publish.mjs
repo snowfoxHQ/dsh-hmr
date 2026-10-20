@@ -7,9 +7,10 @@
  *   npm run release:dry          # everything except the final upload
  *   npm run release              # real publish (latest tag)
  *   npm run release -- --tag next --otp 123456
+ *   npm run release -- --registry https://registry.npmjs.org   # bypass a mirror registry
  *   npm run release -- --skip-checks   # no git/build/preflight, publish only
  */
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +24,7 @@ const { values: flags } = parseArgs({
     'dry-run': { type: 'boolean', default: false },
     tag: { type: 'string', default: 'latest' },
     otp: { type: 'string' },
+    registry: { type: 'string' },
     'skip-checks': { type: 'boolean', default: false },
     'skip-build': { type: 'boolean', default: false },
   },
@@ -61,14 +63,32 @@ function readPackage(dir) {
   return JSON.parse(readFileSync(path.join(repoRoot, dir, 'package.json'), 'utf8'));
 }
 
+/** Registry to publish to; defaults to whatever npm is configured with. */
+const registry = flags.registry?.replace(/\/+$/, '') ?? null;
+
+function npmArgs(args) {
+  return registry ? [...args, '--registry', registry] : args;
+}
+
+/** Mirror registries are read-only for publishing; catching this early saves a confusing 403. */
+const MIRROR_REGISTRY = /(npmmirror|taobao|cnpm|aliyun|tencent|huaweicloud)/i;
+
+function configuredRegistry() {
+  try {
+    return npmOutput(['config', 'get', 'registry']).trim();
+  } catch {
+    return '(unknown)';
+  }
+}
+
 /** `npm view` exits non-zero when the version does not exist yet. */
 function publishedVersion(name, version) {
-  const result = spawnSync('npm', ['view', `${name}@${version}`, 'version'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    shell: process.platform === 'win32',
-  });
-  return result.status === 0 && result.stdout.trim() === version;
+  try {
+    const output = npmOutput(npmArgs(['view', `${name}@${version}`, 'version']));
+    return output.trim() === version;
+  } catch {
+    return false;
+  }
 }
 
 function assertCleanTree() {
@@ -111,6 +131,18 @@ for (const pkg of packages) {
 }
 
 if (!skipChecks) {
+  const target = registry ?? configuredRegistry();
+  console.log(`registry: ${target}`);
+  if (!registry && MIRROR_REGISTRY.test(target)) {
+    console.error(
+      `refusing to publish to a mirror registry (${target}).\n` +
+        'Either pass an explicit target:\n' +
+        '  npm run release -- --registry https://registry.npmjs.org\n' +
+        'or pin the official registry for this repo:\n' +
+        '  npm config set registry https://registry.npmjs.org --location=project',
+    );
+    process.exit(1);
+  }
   assertCleanTree();
   assertLoggedIn();
 }
@@ -143,7 +175,7 @@ for (const pkg of packages) {
 
   console.log(`\n=== ${dryRun ? 'dry-run ' : ''}publish ${pkg.name}@${pkg.version} (tag: ${flags.tag}) ===`);
   try {
-    runNpm(dryRun ? [...args, '--dry-run'] : args, path.join(repoRoot, pkg.dir));
+    runNpm(npmArgs(dryRun ? [...args, '--dry-run'] : args), path.join(repoRoot, pkg.dir));
   } catch {
     console.error(
       `\npublish failed for ${pkg.name}.\n` +

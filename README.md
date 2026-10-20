@@ -131,6 +131,12 @@ npm run release       # 真正发布（默认 latest；可加 -- --tag next --ot
 `release` 按 `@dsh-hmr/hmr-client` → `dsh-hmr` 的顺序发布，两个包共用同一个版本号，版本不一致
 会直接拒绝。发布前会检查该版本是否已存在于 npm，发布后会回查 `npm view` 确认。
 
+如果本机 npm 指向镜像（`npmmirror` / `taobao` 等），脚本会拒绝发布并提示改用官方源：
+
+```bash
+npm run release -- --registry https://registry.npmjs.org
+```
+
 包 `package.json` 还缺 `repository` / `homepage`（远端仓库尚未配置），发布前建议补上，否则 npm
 页面会是空的。
 
