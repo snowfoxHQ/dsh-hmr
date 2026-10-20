@@ -1,7 +1,7 @@
 {
   "name": "dsh-hmr",
   "version": "0.1.0",
-  "description": "Cognitive memory for DeepSeek Harness, powered by HMR — reasoning chains, reflection, and self-evolution (not hot module replacement)",
+  "description": "dsh-Hestia Memory Runtime (dsh-hmr): cognitive memory for DeepSeek Harness — reasoning chains, reflection and self-evolution. Not hot module replacement.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

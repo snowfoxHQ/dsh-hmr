@@ -1,14 +1,21 @@
-# dsh-hmr
+# dsh-hmr — dsh-Hestia Memory Runtime
+
+**全名：dsh-Hestia Memory Runtime**（包名 `dsh-hmr`，工具前缀 `hmr_`，可简称 HMR 认知记忆）。
 
 把 [HMR](https://github.com/snowfoxHQ/HMR) 认知记忆运行时接入 **DeepSeek Harness (dsh)** 的 monorepo。
 
 HMR 提供的不只是"存笔记 + 搜笔记"，而是显式推理链、反思循环、主动遗忘曲线和自我演化。
 `dsh-hmr` 把这些能力包装成 dsh 插件，让 harness 里的 agent 拥有跨会话的认知上下文。
 
+> 名称说明：官方 `@deepseek-ai/dsh-hmr` 是**热更新（hot module replacement）**，与
+> **dsh-Hestia Memory Runtime** 同名不同物，二者无代码关联。
+
 ## 目录结构
 
 ```
 dsh-hmr/
+├── docs/
+│   └── dsh-listing.md     # 提交给 dsh 插件目录的条目文案（显示名：dsh-Hestia Memory Runtime）
 ├── packages/
 │   ├── hmr-client/        # TypeScript 客户端，封装 HMR 的 HTTP 接口（独立 npm 包）
 │   └── dsh-hmr/           # dsh 插件本体，注册 hmr_* 工具（独立 npm 包）

@@ -6,6 +6,8 @@ All notable changes to this workspace are documented here. Both published packag
 ## 0.1.0 — 2026-10-20
 
 First working release: HMR cognitive memory mounted as a dsh plugin.
+Display name: **dsh-Hestia Memory Runtime** (package `dsh-hmr`; unrelated to the official
+`@deepseek-ai/dsh-hmr` hot-module-replacement plugin).
 
 ### Added
 

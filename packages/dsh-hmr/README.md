@@ -1,18 +1,20 @@
-# dsh-hmr
+# dsh-hmr — dsh-Hestia Memory Runtime
+
+**Full name: dsh-Hestia Memory Runtime.** Package name `dsh-hmr`, tools prefixed `hmr_`.
 
 Cognitive memory for [DeepSeek Harness](https://www.npmjs.com/package/@deepseek-ai/dsh), powered by
-[HMR](https://github.com/snowfoxHQ/HMR).
+[HMR](https://github.com/snowfoxHQ/HMR). It stores decisions, reasoning chains and reflections, then
+recalls them by meaning in later sessions.
 
-> **Not** hot module replacement. Despite the name clash with `@deepseek-ai/dsh-hmr`, this package is
-> an agent-memory plugin: it stores decisions, lessons and reasoning chains, then recalls them by
-> meaning in later sessions.
+> **Not** hot module replacement. `dsh-Hestia Memory Runtime` shares an acronym with the official
+> `@deepseek-ai/dsh-hmr` (hot module replacement) but is an unrelated agent-memory plugin.
 
 Five tools are registered on the harness tool registry:
 
 | Tool | Purpose |
 | --- | --- |
 | `hmr_recall` | Semantic search over long-term memory, with the reasoning trace for why each memory matched. |
-| `hmr_ingest` | Persist a durable memory (decision, lesson, fact, concept, preference, episode). |
+| `hmr_ingest` | Persist a durable memory: `concept`, `project`, `decision`, `runtime`, `task`, `workflow`, `agent_memory`, `execution`, `reflection`. |
 | `hmr_think` | Record a reasoning chain; supplying the outcome triggers reflection. |
 | `hmr_reflect` | Compare intent vs. actual outcome and extract insights worth keeping. |
 | `hmr_evolve` | Deduplicate, abstract and prune memory. Supports `dry_run`. |

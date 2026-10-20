@@ -1,6 +1,8 @@
 # @dsh-hmr/hmr-client
 
 TypeScript client for the [HMR](https://github.com/snowfoxHQ/HMR) cognitive memory HTTP service.
+Part of **dsh-Hestia Memory Runtime** — the dsh plugin `dsh-hmr` bundles it, so end users normally
+install the plugin rather than this package.
 
 Zero runtime dependencies — uses the global `fetch` from Node 18+.
 
