@@ -58,6 +58,12 @@ vendor/hmr/hmr          (认知运行时：SQLite + 向量索引 + 推理链)
 
 ## 快速开始
 
+> **只想用插件、不想改代码？** 不用 clone 本仓库：先装宿主程序
+> [dsh](https://www.npmjs.com/package/@deepseek-ai/dsh)（`npm i -g @deepseek-ai/dsh`），
+> 再 `dsh plugin --profile web add dsh-hmr`。完整步骤见
+> [`plugins/dsh-hmr/README.md`](plugins/dsh-hmr/README.md)。
+> 下面是从源码构建的开发者流程。
+
 ```bash
 # 1. 拉取 HMR 子模块
 git submodule update --init --recursive

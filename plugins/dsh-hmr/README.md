@@ -19,6 +19,27 @@ Five tools are registered on the harness tool registry:
 | `hmr_reflect` | Compare intent vs. actual outcome and extract insights worth keeping. |
 | `hmr_evolve` | Deduplicate, abstract and prune memory. Supports `dry_run`. |
 
+## Prerequisites
+
+- **DeepSeek Harness** — the host program that provides the `dsh` command. This plugin is loaded
+  by dsh and does nothing on its own:
+
+  ```bash
+  npm i -g @deepseek-ai/dsh
+  ```
+
+  Package: <https://www.npmjs.com/package/@deepseek-ai/dsh> ·
+  Repository: <https://github.com/deepseek-ai/deepseek-harness>
+
+  Needs dsh `0.2.1` or newer; the plugin's peer dependencies are `@deepseek-ai/dsh-tools@^0.2.1-rc.2`.
+  dsh is currently published as a release candidate, so the command above installs `0.2.1-rc.2` —
+  pin an exact version if you need a frozen one.
+- **Node 18+**
+- **Python 3.10+**
+
+> The official `@deepseek-ai/dsh-hmr` package is **not** required. That one is hot module
+> replacement; this plugin only needs dsh itself.
+
 ## Install
 
 ```bash
@@ -32,8 +53,6 @@ npx dsh-hmr doctor
 # 3. Mount the plugin into a profile
 dsh plugin --profile web add dsh-hmr
 ```
-
-Requires Node 18+.
 
 ## Configuration
 

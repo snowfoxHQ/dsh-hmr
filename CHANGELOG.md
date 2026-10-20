@@ -3,6 +3,16 @@
 All notable changes to this workspace are documented here. Both published packages
 (`@dsh-hmr/hmr-client` and `dsh-hmr`) share the same version line.
 
+## Unreleased
+
+### Changed
+
+- `plugins/dsh-hmr/README.md` (the README rendered on npm) now lists the dsh host program as a
+  prerequisite with the `npm i -g @deepseek-ai/dsh` command and links to its npm page and
+  repository, and states explicitly that the official `@deepseek-ai/dsh-hmr` is not needed.
+- Root `README.md` now points npm users at the plugin README instead of the from-source workflow.
+- `docs/dsh-listing.md` gained a `Requires` row naming the host version.
+
 ## 0.1.0 — 2026-10-20
 
 First working release: HMR cognitive memory mounted as a dsh plugin.
