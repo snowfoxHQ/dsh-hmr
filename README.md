@@ -11,7 +11,7 @@ HMR 提供的不只是"存笔记 + 搜笔记"，而是显式推理链、反思�
 dsh-hmr/
 ├── packages/
 │   ├── hmr-client/        # TypeScript 客户端，封装 HMR 的 HTTP 接口（独立 npm 包）
-│   └── dsh-hmr/           # dsh 插件本体，导出 ctx.memory + hmr_* 工具（独立 npm 包）
+│   └── dsh-hmr/           # dsh 插件本体，注册 hmr_* 工具（独立 npm 包）
 └── vendor/
     └── hmr/               # HMR 上游仓库（git submodule，独立子仓，不修改上游代码）
         ├── hmr/           # Python 认知运行时
@@ -24,7 +24,7 @@ dsh-hmr/
 
 ```
 dsh agent
-   │  ctx.memory / hmr_* 工具
+   │  hmr_* 工具
    ▼
 packages/dsh-hmr        (Node.js 插件)
    │  HTTP + x-hmr-token
@@ -44,15 +44,18 @@ vendor/hmr/hmr          (认知运行时：SQLite + 向量索引 + 推理链)
 # 1. 拉取 HMR 子模块
 git submodule update --init --recursive
 
-# 2. 安装 HMR Python 包与服务依赖
-pip install -e vendor/hmr
-pip install fastapi uvicorn
+# 2. 安装 Python 依赖（插件通过 PYTHONPATH 直接加载 vendor 源码，无需 pip install -e）
+pip install pydantic numpy fastapi uvicorn
+pip install sentence-transformers   # 可选，缺失时退化为 TF-IDF
 
 # 3. 安装 Node 依赖并构建
 npm install
 npm run build
 
-# 4. 在 dsh 中启用插件
+# 4. 自检 Python 环境与内置运行时
+node packages/dsh-hmr/dist/cli.js doctor
+
+# 5. 在 dsh 中启用插件
 dsh plugin --profile web add ./packages/dsh-hmr
 ```
 

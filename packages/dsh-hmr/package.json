@@ -1,0 +1,62 @@
+{
+  "name": "dsh-hmr",
+  "version": "0.1.0",
+  "description": "Cognitive memory for DeepSeek Harness, powered by HMR — reasoning chains, reflection, and self-evolution (not hot module replacement)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "dsh-hmr": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "python",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "memory",
+    "cognitive-memory",
+    "agent-memory"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/vendor-python.mjs && node scripts/build.mjs && tsc -p tsconfig.json --emitDeclarationOnly",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "vendor:python": "node scripts/vendor-python.mjs",
+    "prepack": "npm run build",
+    "test": "vitest run --passWithNoTests",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-tools": "^0.2.1-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.5"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-tools": "^0.2.1-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.5",
+    "@dsh-hmr/hmr-client": "^0.1.0",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.21.5",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8"
+  }
+}

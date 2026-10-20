@@ -1,0 +1,15 @@
+# Bundle patch for dsh-hmr.
+#
+# Mounted by the dsh profile loader after `dsh plugin --profile <name> add dsh-hmr`
+# and adding "dsh-hmr" to `dsh.profile.bundles` in the profile package.json.
+#
+# Override any of these in the profile's own cordis.patch.yml, e.g.:
+#   - id: hmr-memory
+#     config:
+#       process: external
+#       baseUrl: http://127.0.0.1:8077
+- insert:
+    - id: hmr-memory
+      name: dsh-hmr
+      config:
+        process: managed
