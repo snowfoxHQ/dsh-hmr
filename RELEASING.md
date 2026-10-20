@@ -25,14 +25,35 @@ npm run release     -- --registry https://registry.npmjs.org   # 真正发布
 ### 0.2 创建 `@dsh-hmr` scope
 
 npm 的 **scope 就是 org 名**，`@dsh-hmr/hmr-client` 能否发布完全取决于账号下有没有 `dsh-hmr`
-这个 org。CLI 的 `npm org` 只能管理成员，**创建 org 必须走网页**：
+这个 org。CLI 的 `npm org` 只有 `set` / `rm` / `ls` 三个子命令（`npm org --help` 可验证），
+**没有 create**，创建只能走网页。
 
-1. 打开 `https://www.npmjs.com/org/create`
-2. Name 填 `dsh-hmr`（不要带 `@`）
-3. Plan 选 **Free**（public packages 免费无限）
-4. 创建后账号自动是该 org 的 `developer`/`owner`
+**先确认名字没被占**——org 名与用户名共用同一命名空间，被占用就永远拿不到这个 scope：
 
-验证 scope 已就位（未发布任何包时返回 404 是正常的，只要不是 `E403`）：
+```bash
+# 两条都必须返回 404；出现正常页面说明名字已经是别人的
+curl -s -o /dev/null -w "%{http_code} org\n"  https://www.npmjs.com/org/dsh-hmr
+curl -s -o /dev/null -w "%{http_code} user\n" https://www.npmjs.com/~dsh-hmr
+```
+
+网页操作：
+
+1. 用**将来执行发布的那个账号**登录 `https://www.npmjs.com/login`
+2. 打开 `https://www.npmjs.com/org/create`（或右上头像菜单 → Organizations → Create organization）
+3. **Name 填 `dsh-hmr`**，不要带 `@`。这个名字创建后不能改，等于 scope 永久定名
+4. Plan 选 **Free**：公开包免费且不限量；私有包才需要 npm Teams 订阅，本项目用不到
+5. 勾选服务条款 → Create
+6. 创建者自动是 org 的 **owner**（默认 `developers` 团队同时带上你）
+
+创建后验证身份，`whoami` 必须和建 org 的账号一致：
+
+```bash
+npm whoami --registry https://registry.npmjs.org
+npm org ls dsh-hmr --registry https://registry.npmjs.org    # 应列出自己，角色 owner
+```
+
+网页侧 `https://www.npmjs.com/org/dsh-hmr` 从 `Scope not found` 变成可访问，就说明 scope 生效了。
+此时 scope 下还没有包，所以下面这条返回 404 是**正常**的；报 `E403` 才是权限问题：
 
 ```bash
 npm view @dsh-hmr/hmr-client version --registry https://registry.npmjs.org
@@ -54,6 +75,11 @@ npm view @dsh-hmr/hmr-client version --registry https://registry.npmjs.org
 
 结论：用 `npm login` 或 classic token 的，创建完 scope 直接发布即可；只有你在 CI 里用 granular
 token 才需要回后台补授权。
+
+顺带记一下 npm 正在收紧「绕过 2FA 的 granular token」：2026-08 起这类 token 不能再用执行
+账户 / 包 / 组织的管理操作（含 org membership 与 package 授权），2027-01 前后不能再直接
+`publish`，只能 staging 后由人工 2FA 放行。本仓库走的是人工 `npm login` + `--otp`，不受影响；
+以后接 CI 应该用 trusted publishing（OIDC），别长期 token。
 
 ### 0.4 registry 必须指向官方源
 
