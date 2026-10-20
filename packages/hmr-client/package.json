@@ -3,6 +3,21 @@
   "version": "0.1.0",
   "description": "TypeScript client for the HMR cognitive memory HTTP service",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowfoxHQ/dsh-hmr.git",
+    "directory": "packages/hmr-client"
+  },
+  "homepage": "https://github.com/snowfoxHQ/dsh-hmr/tree/main/packages/hmr-client#readme",
+  "bugs": {
+    "url": "https://github.com/snowfoxHQ/dsh-hmr/issues"
+  },
+  "keywords": [
+    "hmr",
+    "cognitive-memory",
+    "agent-memory",
+    "typescript-client"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

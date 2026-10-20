@@ -9,7 +9,8 @@ replacement) never reads as the same thing.
 | Display name | **dsh-Hestia Memory Runtime** |
 | Package | `dsh-hmr` |
 | npm | `https://www.npmjs.com/package/dsh-hmr` |
-| Repository | _(to fill in once the public remote exists)_ |
+| Repository | `https://github.com/snowfoxHQ/dsh-hmr` |
+| Source | `https://github.com/snowfoxHQ/dsh-hmr/tree/main/packages/dsh-hmr` |
 | Tags | `memory`, `cognition`, `agent-memory`, `rag`, `deepseek-harness` |
 | Tools | `hmr_recall`, `hmr_ingest`, `hmr_think`, `hmr_reflect`, `hmr_evolve` |
 | Install | `dsh plugin --profile <name> add dsh-hmr` |

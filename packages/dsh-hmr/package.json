@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "dsh-Hestia Memory Runtime (dsh-hmr): cognitive memory for DeepSeek Harness — reasoning chains, reflection and self-evolution. Not hot module replacement.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowfoxHQ/dsh-hmr.git",
+    "directory": "packages/dsh-hmr"
+  },
+  "homepage": "https://github.com/snowfoxHQ/dsh-hmr/tree/main/packages/dsh-hmr#readme",
+  "bugs": {
+    "url": "https://github.com/snowfoxHQ/dsh-hmr/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
