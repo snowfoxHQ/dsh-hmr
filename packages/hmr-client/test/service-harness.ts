@@ -8,8 +8,8 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 /** packages/hmr-client/test -> repo root */
 export const repoRoot = path.resolve(here, '../../..');
-const vendoredRuntime = path.join(repoRoot, 'packages', 'dsh-hmr', 'python');
-const vendorScript = path.join(repoRoot, 'packages', 'dsh-hmr', 'scripts', 'vendor-python.mjs');
+const vendoredRuntime = path.join(repoRoot, 'plugins', 'dsh-hmr', 'python');
+const vendorScript = path.join(repoRoot, 'plugins', 'dsh-hmr', 'scripts', 'vendor-python.mjs');
 
 /**
  * Tests boot the vendored copy the plugin ships, because `patches/*.patch` are

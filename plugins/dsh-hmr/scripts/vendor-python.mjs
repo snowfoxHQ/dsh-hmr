@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Copy the HMR Python runtime from `vendor/hmr` into `packages/dsh-hmr/python`
+ * Copy the HMR Python runtime from `vendor/hmr` into `plugins/dsh-hmr/python`
  * so the published npm tarball is self-contained.
  *
  * PYTHONPATH points at `python/`, so `import hmr` works without `pip install`.
@@ -55,7 +55,7 @@ function applyPatches(files) {
         [
           'apply',
           '--directory',
-          'packages/dsh-hmr/python',
+          'plugins/dsh-hmr/python',
           '--whitespace=nowarn',
           patchPath,
         ],

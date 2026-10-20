@@ -30,7 +30,7 @@ const PACKAGES = [
     entry: 'dist/index.js',
   },
   {
-    dir: 'packages/dsh-hmr',
+    dir: 'plugins/dsh-hmr',
     required: [
       'package.json',
       'README.md',
@@ -152,7 +152,7 @@ function checkTarball(pkg, files, spec) {
  * block moved to the end of the module so the v2 routes get registered.
  */
 function checkVendoredPatch() {
-  const server = path.join(repoRoot, 'packages/dsh-hmr/python/service/server.py');
+  const server = path.join(repoRoot, 'plugins/dsh-hmr/python/service/server.py');
   if (!existsSync(server)) return;
   const lines = readFileSync(server, 'utf8').split('\n');
   const runAt = lines.findIndex((line) => /^if __name__ == ["']__main__["']:/.test(line));

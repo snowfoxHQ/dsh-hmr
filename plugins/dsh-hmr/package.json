@@ -6,9 +6,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/snowfoxHQ/dsh-hmr.git",
-    "directory": "packages/dsh-hmr"
+    "directory": "plugins/dsh-hmr"
   },
-  "homepage": "https://github.com/snowfoxHQ/dsh-hmr/tree/main/packages/dsh-hmr#readme",
+  "homepage": "https://github.com/snowfoxHQ/dsh-hmr/tree/main/plugins/dsh-hmr#readme",
   "bugs": {
     "url": "https://github.com/snowfoxHQ/dsh-hmr/issues"
   },

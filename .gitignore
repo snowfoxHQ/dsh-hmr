@@ -6,9 +6,11 @@ dist/
 .turbo/
 coverage/
 packages/*/dist/
+plugins/*/dist/
+skills/*/dist/
 
 # 由 scripts/vendor-python.mjs 从 vendor/hmr 生成（prepack 时重建）
-packages/dsh-hmr/python/
+plugins/*/python/
 
 # ── Python（vendor/hmr 自带一份，这里兜底）────────────────────
 __pycache__/

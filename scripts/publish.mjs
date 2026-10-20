@@ -17,7 +17,8 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PACKAGES = ['packages/hmr-client', 'packages/dsh-hmr'];
+/** Shared libraries live in `packages/`, dsh plugins in `plugins/`, skills in `skills/`. */
+const PACKAGES = ['packages/hmr-client', 'plugins/dsh-hmr'];
 
 const { values: flags } = parseArgs({
   options: {

@@ -5,7 +5,9 @@
   "description": "HMR cognitive memory runtime packaged for DeepSeek Harness (dsh)",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "plugins/*",
+    "skills/*"
   ],
   "engines": {
     "node": ">=18"
