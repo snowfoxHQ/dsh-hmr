@@ -1,0 +1,42 @@
+# ── Node / TypeScript ─────────────────────────────────────────
+node_modules/
+dist/
+*.tsbuildinfo
+.npm/
+.turbo/
+coverage/
+packages/*/dist/
+
+# ── Python（vendor/hmr 自带一份，这里兜底）────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# ── HMR 运行时数据 ────────────────────────────────────────────
+hmr_data/
+.hmr_data/
+*_data/
+*.db
+
+# ── 环境与密钥 ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+secrets.json
+
+# ── 编辑器 / 系统 ─────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── 日志与临时文件 ────────────────────────────────────────────
+*.log
+*.tmp

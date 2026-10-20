@@ -1,0 +1,4 @@
+[submodule "vendor/hmr"]
+	path = vendor/hmr
+	url = https://github.com/snowfoxHQ/HMR.git
+	branch = main
