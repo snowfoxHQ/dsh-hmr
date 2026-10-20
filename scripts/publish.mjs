@@ -102,7 +102,7 @@ function assertCleanTree() {
 
 function assertLoggedIn() {
   try {
-    const user = npmOutput(['whoami']).trim();
+    const user = npmOutput(npmArgs(['whoami'])).trim();
     console.log(`npm user: ${user}`);
   } catch {
     console.error('not logged in to npm — run "npm login" first');
