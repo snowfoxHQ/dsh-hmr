@@ -12,13 +12,20 @@ function text(value: string): { type: 'text'; text: string }[] {
   return [{ type: 'text', text: value }];
 }
 
+/**
+ * Must stay identical to `MemoryObject.type` in `hmr/core/models.py` — the
+ * service validates it as a pydantic Literal and answers 500 on anything else.
+ */
 const MEMORY_TYPES = [
-  'decision',
-  'lesson',
-  'fact',
   'concept',
-  'preference',
-  'episode',
+  'project',
+  'decision',
+  'runtime',
+  'task',
+  'workflow',
+  'agent_memory',
+  'execution',
+  'reflection',
 ] as const;
 
 const THOUGHT_TYPES = ['observation', 'hypothesis', 'decision', 'action', 'insight'] as const;
@@ -32,9 +39,9 @@ export function registerHmrTools(ctx: Context, deps: HmrToolDeps): void {
       name: 'hmr_ingest',
       description:
         'Persist a durable memory into HMR long-term memory. Use it for decisions and the reasoning ' +
-        'behind them, hard-won lessons, stable project facts, and user preferences — not for ' +
-        'transient scratch notes. HMR classifies, embeds, and indexes the memory so it can be ' +
-        'recalled semantically in later sessions.',
+        'behind them, stable project context, reusable concepts, and post-execution reflections — ' +
+        'not for transient scratch notes. HMR classifies, embeds, and indexes the memory so it can ' +
+        'be recalled semantically in later sessions.',
       parameters: {
         content: {
           type: 'string',
@@ -44,7 +51,10 @@ export function registerHmrTools(ctx: Context, deps: HmrToolDeps): void {
         memory_type: {
           type: 'string',
           enum: [...MEMORY_TYPES],
-          description: 'Category hint. Omit to let the memory policy classify it.',
+          description:
+            'Category hint; HMR rejects anything outside the enum. concept = reusable knowledge, ' +
+            'project = project context, decision = choice + rationale, task/workflow/runtime/execution ' +
+            '= operational traces, reflection = post-execution learning. Omit to let the memory policy classify it.',
         },
         title: {
           type: 'string',

@@ -65,7 +65,7 @@ dsh plugin --profile web add ./packages/dsh-hmr
 
 | 变量 | 默认 | 说明 |
 |------|------|------|
-| `HMR_STORAGE_PATH` | `./hmr_data` | 记忆数据目录，必须是**已存在的盘符** |
+| `HMR_STORAGE_PATH` | `~/.dsh-hmr/data` | 记忆数据目录；盘符不存在时插件会忽略并回退到默认值 |
 | `HMR_HOST` | `127.0.0.1` | 监听地址，不要改成 `0.0.0.0` |
 | `HMR_PORT` | `8077` | 服务端口 |
 | `HMR_TOKEN` | 空 | 设置后客户端必须带同名 `x-hmr-token` |
@@ -90,6 +90,23 @@ dsh plugin --profile web add ./packages/dsh-hmr
 - 服务只绑 `127.0.0.1`，不要对外开放。
 - 不要把抓取来的不可信网页内容直接写进长期记忆（memory poisoning）。
 - `HMR_TOKEN` 建议在多人共用的机器上设置。
+
+## 开发
+
+```bash
+npm run build      # 两个包全量构建（插件会先把 vendor/hmr 复制进 python/）
+npm run typecheck
+npm test           # 两个包的集成测试，会真实拉起 Python 服务
+```
+
+全链路回归（用真实 agent 跑一遍 `hmr_*` 工具）：
+
+```bash
+dsh plugin --profile headless add ./packages/dsh-hmr
+dsh --profile headless "用 hmr_ingest 记录一条记忆，再用 hmr_recall 查回来"
+```
+
+`vendor/hmr` 是只读上游子模块：在子仓里改完先提交到子仓，再在根仓更新指针。
 
 ## License
 
